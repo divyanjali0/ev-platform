@@ -118,7 +118,6 @@ class ItineraryCustomerController extends Controller
             ->with('success', "Revision {$revisionNo} saved with updated fields only.");
     }
 
-
     public function destroy(ItineraryCustomer $itineraryCustomer)
     {
         $itineraryCustomer->delete();

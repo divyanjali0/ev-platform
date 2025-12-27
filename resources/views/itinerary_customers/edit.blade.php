@@ -175,7 +175,6 @@
                                 @endforeach
                             </select>
                         </div>
-
                     </div>
 
                     <div class="mt-4 d-flex gap-2 justify-content-end">

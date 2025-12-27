@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ItineraryCustomer;
 use Illuminate\Http\Request;
 use App\Models\ItineraryCustomerRevision;
-
+    use App\Models\TourTheme;
+use App\Models\City;
 class ItineraryCustomerController extends Controller
 {
     public function index()
@@ -27,7 +28,14 @@ class ItineraryCustomerController extends Controller
 
     public function edit(ItineraryCustomer $itineraryCustomer)
     {
-        return view('itinerary_customers.edit', compact('itineraryCustomer'));
+        $themes = TourTheme::select('id', 'theme_name')->orderBy('theme_name')->get();
+        $cities = City::select('id', 'name')->orderBy('name')->get();
+
+        return view('itinerary_customers.edit', compact(
+            'itineraryCustomer',
+            'themes',
+            'cities'
+        ));
     }
 
     public function updateRevision(Request $request, ItineraryCustomer $itineraryCustomer)

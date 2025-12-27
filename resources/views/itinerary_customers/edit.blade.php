@@ -4,6 +4,10 @@
             font-weight: 500;
         }
     </style>
+    @php
+        $selectedThemes = collect(json_decode($itineraryCustomer->theme_ids ?? '[]'));
+        $selectedCities = collect(json_decode($itineraryCustomer->city_ids ?? '[]'));
+    @endphp
 
     <main class="ml-64 pt-14 p-2">
         <div class="container">
@@ -137,6 +141,60 @@
                             <button type="submit" class="btn btn-success">Update Details</button>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <div class="card shadow">
+
+                <div class="card-header fw-bold">
+                    Tour Preferences (Themes & Cities)
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+
+                        <!-- Themes -->
+                        <div class="col-md-12">
+                            <label class="form-label">Tour Themes</label>
+                            <div class="row">
+                                @foreach($themes as $theme)
+                                    <div class="col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input"
+                                                type="checkbox"
+                                                name="theme_ids[]"
+                                                value="{{ $theme->id }}"
+                                                id="theme{{ $theme->id }}"
+                                                {{ $selectedThemes->contains($theme->id) ? 'checked' : '' }}>
+
+                                            <label class="form-check-label" for="theme{{ $theme->id }}">
+                                                {{ $theme->theme_name }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Cities (Multi Select) -->
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label">Cities</label>
+                            <select name="city_ids[]"
+                                    class="form-select"
+                                    multiple
+                                    size="6">
+                                @foreach($cities as $city)
+                                    <option value="{{ $city->id }}"
+                                        {{ $selectedCities->contains($city->id) ? 'selected' : '' }}>
+                                        {{ $city->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">
+                                Hold Ctrl (Windows) / Cmd (Mac) to select multiple cities
+                            </small>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

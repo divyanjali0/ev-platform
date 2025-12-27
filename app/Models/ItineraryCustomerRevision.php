@@ -55,4 +55,18 @@ class ItineraryCustomerRevision extends Model
     {
         return $this->belongsTo(ItineraryCustomer::class, 'itinerary_customer_id');
     }
+
+//     use App\Models\TourTheme;
+// use App\Models\City;
+
+    public function themes()
+    {
+        return TourTheme::whereIn('id', $this->theme_ids ?? [])->get();
+    }
+
+    public function cities()
+    {
+        return City::whereIn('id', $this->city_ids ?? [])->get();
+    }
+
 }

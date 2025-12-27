@@ -54,4 +54,5 @@ class ItineraryCustomer extends Model
     {
         return $this->hasOne(ItineraryCustomerRevision::class)->latestOfMany();
     }
+
 }

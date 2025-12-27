@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\ItineraryCustomer;
 use Illuminate\Http\Request;
 use App\Models\ItineraryCustomerRevision;
-    use App\Models\TourTheme;
+use App\Models\TourTheme;
 use App\Models\City;
+
 class ItineraryCustomerController extends Controller
 {
     public function index()

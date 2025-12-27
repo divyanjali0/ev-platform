@@ -132,8 +132,15 @@
                         </div>
 
                         <!-- ================= TOUR PREFERENCES ================= -->
+                                  <div class="card shadow mb-3">
+                <div class="card-header fw-bold">Tour Preferences</div>
+                <div class="card-body">
+                    <form id="tourForm" action="{{ route('itinerary-customers.updateRevision', $itineraryCustomer) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
                         <!-- Themes (Radio Buttons) -->
-                        <div class="col-md-12 mt-4 mb-3">
+                        <div class="mb-3">
                             <label class="form-label">Tour Themes</label>
                             <div class="row">
                                 @foreach($themes as $theme)
@@ -148,24 +155,8 @@
                         </div>
 
                         <!-- Cities -->
-                        <div class="col-md-12 mb-3">
+                        <div class="mb-3">
                             <label class="form-label">Cities</label>
-
-                            <!-- Selected Cities -->
-                            <div id="selectedCities" class="mb-2">
-                                @foreach($selectedCities as $cityId)
-                                    @php $city = $cities->firstWhere('id', $cityId); @endphp
-                                    @if($city)
-                                        <span class="badge bg-primary selected-city" data-id="{{ $city->id }}">
-                                            {{ $city->name }}
-                                            <button type="button" class="btn-close btn-close-white btn-sm remove-city" aria-label="Remove"></button>
-                                            <input type="hidden" name="city_ids[]" value="{{ $city->id }}">
-                                        </span>
-                                    @endif
-                                @endforeach
-                            </div>
-
-                            <!-- Dropdown to add new cities -->
                             <select id="cityDropdown" class="form-select">
                                 <option value="">-- Select City to Add --</option>
                                 @foreach($cities as $city)
@@ -175,6 +166,106 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <!-- Selected Cities / Itinerary Days -->
+                        <div id="itineraryDaysContainer">
+                            @foreach($selectedCities as $cityId)
+                                @php $city = $cities->firstWhere('id', $cityId); @endphp
+                                @if($city)
+                                    <div class="day-card" data-city-id="{{ $city->id }}">
+                                        <h5>City: {{ $city->name }} <button type="button" class="btn-close remove-day float-end" aria-label="Remove"></button></h5>
+                                        <div class="mb-2">
+                                            <label>Date</label>
+                                            <input type="date" name="day_date[{{ $city->id }}]" class="form-control">
+                                        </div>
+                                        <div>
+                                            <label>Description</label>
+                                            <div class="quill-editor"></div>
+                                            <input type="hidden" name="day_description[{{ $city->id }}]">
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+
+                        <div class="mt-4 d-flex gap-2 justify-content-end">
+                            <button type="submit" class="btn btn-success">Save Tour Preferences & Itinerary</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quill JS -->
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const cityDropdown = document.getElementById('cityDropdown');
+                const itineraryContainer = document.getElementById('itineraryDaysContainer');
+                const quillEditors = {};
+
+                function addCityDay(cityId, cityName) {
+                    if (itineraryContainer.querySelector(`[data-city-id='${cityId}']`)) return;
+
+                    const dayCard = document.createElement('div');
+                    dayCard.classList.add('day-card');
+                    dayCard.setAttribute('data-city-id', cityId);
+
+                    dayCard.innerHTML = `
+                        <h5>City: ${cityName} <button type="button" class="btn-close remove-day float-end" aria-label="Remove"></button></h5>
+                        <div class="mb-2">
+                            <label>Date</label>
+                            <input type="date" name="day_date[${cityId}]" class="form-control">
+                        </div>
+                        <div>
+                            <label>Description</label>
+                            <div class="quill-editor" id="editor-${cityId}"></div>
+                            <input type="hidden" name="day_description[${cityId}]">
+                        </div>
+                    `;
+                    itineraryContainer.appendChild(dayCard);
+
+                    // Initialize Quill editor
+                    quillEditors[cityId] = new Quill(`#editor-${cityId}`, { theme: 'snow' });
+                }
+
+                // Initialize Quill for existing days
+                document.querySelectorAll('.quill-editor').forEach((editorDiv) => {
+                    const cityId = editorDiv.parentElement.parentElement.dataset.cityId;
+                    quillEditors[cityId] = new Quill(editorDiv, { theme: 'snow' });
+                });
+
+                // Add city from dropdown
+                cityDropdown.addEventListener('change', function () {
+                    const cityId = this.value;
+                    if (!cityId) return;
+                    const cityName = this.options[this.selectedIndex].text;
+                    addCityDay(cityId, cityName);
+                    this.value = '';
+                });
+
+                // Remove day
+                itineraryContainer.addEventListener('click', function(e) {
+                    if(e.target.classList.contains('remove-day')) {
+                        e.target.closest('.day-card').remove();
+                    }
+                });
+
+                // On form submit, copy Quill content to hidden inputs
+                document.getElementById('tourForm').addEventListener('submit', function () {
+                    for (const cityId in quillEditors) {
+                        const editor = quillEditors[cityId];
+                        const hiddenInput = document.querySelector(`input[name='day_description[${cityId}]']`);
+                        if(hiddenInput) {
+                            hiddenInput.value = editor.root.innerHTML;
+                        }
+                    }
+                });
+            });
+        </script>
+                        
                     </div>
 
                     <div class="mt-4 d-flex gap-2 justify-content-end">
@@ -186,7 +277,7 @@
         </div>
     </div>
 
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', () => {
             const dd = document.getElementById('cityDropdown'), sel = document.getElementById('selectedCities');
             dd.addEventListener('change', () => {
@@ -196,6 +287,6 @@
             });
             sel.addEventListener('click', e => e.target.classList.contains('remove-city') && e.target.parentElement.remove());
         });
-    </script>
+    </script> --}}
 
 </x-app-layout>

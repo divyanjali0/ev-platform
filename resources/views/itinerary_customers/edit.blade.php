@@ -26,8 +26,12 @@
 
         .accordion-button {
             border: 2px solid #000000d9;
-        font-weight: 700;
-        border-radius: 0 !important;
+            font-weight: 700;
+            border-radius: 0 !important;
+        }
+
+        .day-card {
+            border: 2px solid #005392;
         }
     </style>
 
@@ -209,7 +213,7 @@
                                         @foreach($selectedCities as $cityId)
                                             @php $city = $cities->firstWhere('id', $cityId); @endphp
                                             @if($city)
-                                                <div class="day-card my-4 border rounded p-3" data-city-id="{{ $city->id }}">
+                                                <div class="day-card my-4 p-3" data-city-id="{{ $city->id }}">
                                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                                         <h5 class="fw-bold mb-0">City: {{ $city->name }}</h5>
                                                         <button type="button" class="btn-close remove-day"></button>
@@ -285,7 +289,7 @@
                                     if (itineraryContainer.querySelector(`[data-city-id="${cityId}"]`)) return;
 
                                     const wrapper = document.createElement('div');
-                                    wrapper.className = 'day-card my-4 border rounded p-3';
+                                    wrapper.className = 'day-card my-4 p-3';
                                     wrapper.dataset.cityId = cityId;
 
                                     wrapper.innerHTML = `

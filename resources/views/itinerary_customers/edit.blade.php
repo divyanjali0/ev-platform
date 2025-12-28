@@ -26,7 +26,7 @@
 
             <div class="card-body">
                 <!-- SINGLE FORM FOR EVERYTHING -->
-                <form action="{{ route('itinerary-customers.updateRevision', $itineraryCustomer) }}" method="POST">
+                <form id="tourForm" action="{{ route('itinerary-customers.updateRevision', $itineraryCustomer) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -135,7 +135,7 @@
                         <div class="card shadow mb-3">
                             <div class="card-header fw-bold">Tour Preferences</div>
                                 <div class="card-body">
-                                    <form id="tourForm" action="{{ route('itinerary-customers.updateRevision', $itineraryCustomer) }}" method="POST">
+                                    {{-- <form id="tourForm" action="{{ route('itinerary-customers.updateRevision', $itineraryCustomer) }}" method="POST"> --}}
                                         @csrf
                                         @method('PUT')
 
@@ -168,13 +168,13 @@
                                         </div>
 
                                         <!-- Selected Cities / Itinerary Days -->
-                                        <div id="itineraryDaysContainer">
+                                        <div id="itineraryDaysContainer" class="mt-4">
                                             @foreach($selectedCities as $cityId)
                                                 @php $city = $cities->firstWhere('id', $cityId); @endphp
                                                 @if($city)
-                                                    <div class="day-card" data-city-id="{{ $city->id }}">
-                                                        <h5>City: {{ $city->name }} <button type="button" class="btn-close remove-day float-end" aria-label="Remove"></button></h5>
-                                                        <div class="mb-2">
+                                                    <div class="day-card my-4" data-city-id="{{ $city->id }}">
+                                                        <h5 class="fw-bold">City: {{ $city->name }} <button type="button" class="btn-close remove-day float-end" aria-label="Remove"></button></h5>
+                                                        <div class="mb-2 w-25">
                                                             <label>Date</label>
                                                             <input type="date" name="day_date[{{ $city->id }}]" class="form-control">
                                                         </div>
@@ -191,7 +191,7 @@
                                         <div class="mt-4 d-flex gap-2 justify-content-end">
                                             <button type="submit" class="btn btn-success">Save Tour Preferences & Itinerary</button>
                                         </div>
-                                    </form>
+                                    {{-- </form> --}}
                                 </div>
                             </div>
                         </div>
@@ -213,8 +213,8 @@
                                     dayCard.setAttribute('data-city-id', cityId);
 
                                     dayCard.innerHTML = `
-                                        <h5>City: ${cityName} <button type="button" class="btn-close remove-day float-end" aria-label="Remove"></button></h5>
-                                        <div class="mb-2">
+                                        <h5 class="fw-bold">City: ${cityName} <button type="button" class="btn-close remove-day float-end" aria-label="Remove"></button></h5>
+                                        <div class="mb-2 w-25">
                                             <label>Date</label>
                                             <input type="date" name="day_date[${cityId}]" class="form-control">
                                         </div>

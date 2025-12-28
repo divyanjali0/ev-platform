@@ -249,9 +249,17 @@
                             </div>
                         </div>
 
-                       <script>
-                            document.addEventListener('DOMContentLoaded', function () {
+                        <div class="mt-4 d-flex gap-2 justify-content-end">
+                            <a href="{{ route('itinerary-customers.index') }}" class="btn btn-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                Save All
+                            </button>
+                        </div>
 
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
                                 const cityDropdown = document.getElementById('cityDropdown');
                                 const itineraryContainer = document.getElementById('itineraryDaysContainer');
                                 const quillEditors = {};
@@ -263,6 +271,7 @@
                                         theme: 'snow',
                                         modules: {
                                             toolbar: [
+                                                [{ header: [1, 2, 3, false] }],   
                                                 ['bold', 'italic', 'underline'],
                                                 [{ list: 'ordered' }, { list: 'bullet' }],
                                                 ['link'],
@@ -287,25 +296,21 @@
 
                                         <div class="mb-3 w-25">
                                             <label class="form-label">Date</label>
-                                            <input type="date"
-                                                name="day_date[${cityId}]"
-                                                class="form-control">
+                                            <input type="date" name="day_date[${cityId}]" class="form-control">
                                         </div>
 
                                         <div class="mb-3">
                                             <label class="form-label">Description</label>
                                             <div class="quill-editor" id="editor-${cityId}"></div>
-                                            <input type="hidden"
-                                                name="day_description[${cityId}]">
+                                            <input type="hidden" name="day_description[${cityId}]">
                                         </div>
 
                                         <div class="mb-3">
                                             <label class="form-label">Images</label>
-                                            <input type="file"
-                                                name="day_images[${cityId}][]"
-                                                class="form-control"
-                                                multiple
-                                                accept="image/*">
+                                            <input type="file" name="day_images[${cityId}][]" class="form-control" multiple accept="image/*">
+                                            <small class="text-muted">
+                                                You can upload multiple images (jpg, png, webp)
+                                            </small>
                                         </div>
                                     `;
 
@@ -341,18 +346,8 @@
                                         }
                                     }
                                 });
-
                             });
                         </script>
-
-                        <div class="mt-4 d-flex gap-2 justify-content-end">
-                            <a href="{{ route('itinerary-customers.index') }}" class="btn btn-secondary">
-                                Cancel
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                Save All
-                            </button>
-                        </div>
                     </div>
                 </form>
             </div>

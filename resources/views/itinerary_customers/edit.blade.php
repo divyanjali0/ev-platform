@@ -172,24 +172,42 @@
                                             @foreach($selectedCities as $cityId)
                                                 @php $city = $cities->firstWhere('id', $cityId); @endphp
                                                 @if($city)
-                                                    <div class="day-card my-4" data-city-id="{{ $city->id }}">
-                                                        <h5 class="fw-bold">City: {{ $city->name }} <button type="button" class="btn-close remove-day float-end" aria-label="Remove"></button></h5>
-                                                        <div class="mb-2 w-25">
-                                                            <label>Date</label>
-                                                            <input type="date" name="day_date[{{ $city->id }}]" class="form-control">
-                                                        </div>
-                                                        <div>
-                                                            <label>Description</label>
-                                                            <div class="quill-editor"></div>
-                                                            <input type="hidden" name="day_description[{{ $city->id }}]">
-                                                        </div>
-                                                    </div>
+                                                    <div class="day-card my-4 border rounded p-3" data-city-id="{{ $city->id }}">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="fw-bold mb-0">City: {{ $city->name }}</h5>
+        <button type="button" class="btn-close remove-day"></button>
+    </div>
+
+    <div class="mb-3 w-25">
+        <label class="form-label">Date</label>
+        <input type="date"
+               name="day_date[{{ $city->id }}]"
+               class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <div class="quill-editor"
+             id="editor-{{ $city->id }}"></div>
+        <input type="hidden"
+               name="day_description[{{ $city->id }}]">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Images</label>
+        <input type="file"
+               name="day_images[{{ $city->id }}][]"
+               class="form-control"
+               multiple
+               accept="image/*">
+        <small class="text-muted">
+            You can upload multiple images (jpg, png, webp)
+        </small>
+    </div>
+</div>
+
                                                 @endif
                                             @endforeach
-                                        </div>
-
-                                        <div class="mt-4 d-flex gap-2 justify-content-end">
-                                            <button type="submit" class="btn btn-success">Save Tour Preferences & Itinerary</button>
                                         </div>
                                     {{-- </form> --}}
                                 </div>
@@ -199,80 +217,115 @@
                         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
                         <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const cityDropdown = document.getElementById('cityDropdown');
-                                const itineraryContainer = document.getElementById('itineraryDaysContainer');
-                                const quillEditors = {};
+                       <script>
+document.addEventListener('DOMContentLoaded', function () {
 
-                                function addCityDay(cityId, cityName) {
-                                    if (itineraryContainer.querySelector(`[data-city-id='${cityId}']`)) return;
+    const cityDropdown = document.getElementById('cityDropdown');
+    const itineraryContainer = document.getElementById('itineraryDaysContainer');
+    const quillEditors = {};
 
-                                    const dayCard = document.createElement('div');
-                                    dayCard.classList.add('day-card');
-                                    dayCard.setAttribute('data-city-id', cityId);
+    function initQuill(cityId) {
+        if (quillEditors[cityId]) return;
 
-                                    dayCard.innerHTML = `
-                                        <h5 class="fw-bold">City: ${cityName} <button type="button" class="btn-close remove-day float-end" aria-label="Remove"></button></h5>
-                                        <div class="mb-2 w-25">
-                                            <label>Date</label>
-                                            <input type="date" name="day_date[${cityId}]" class="form-control">
-                                        </div>
-                                        <div>
-                                            <label>Description</label>
-                                            <div class="quill-editor" id="editor-${cityId}"></div>
-                                            <input type="hidden" name="day_description[${cityId}]">
-                                        </div>
-                                    `;
-                                    itineraryContainer.appendChild(dayCard);
+        quillEditors[cityId] = new Quill(`#editor-${cityId}`, {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link'],
+                    ['clean']
+                ]
+            }
+        });
+    }
 
-                                    // Initialize Quill editor
-                                    quillEditors[cityId] = new Quill(`#editor-${cityId}`, { theme: 'snow' });
-                                }
+    function addCityDay(cityId, cityName) {
+        if (itineraryContainer.querySelector(`[data-city-id="${cityId}"]`)) return;
 
-                                // Initialize Quill for existing days
-                                document.querySelectorAll('.quill-editor').forEach((editorDiv) => {
-                                    const cityId = editorDiv.parentElement.parentElement.dataset.cityId;
-                                    quillEditors[cityId] = new Quill(editorDiv, { theme: 'snow' });
-                                });
+        const wrapper = document.createElement('div');
+        wrapper.className = 'day-card my-4 border rounded p-3';
+        wrapper.dataset.cityId = cityId;
 
-                                // Add city from dropdown
-                                cityDropdown.addEventListener('change', function () {
-                                    const cityId = this.value;
-                                    if (!cityId) return;
-                                    const cityName = this.options[this.selectedIndex].text;
-                                    addCityDay(cityId, cityName);
-                                    this.value = '';
-                                });
+        wrapper.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">City: ${cityName}</h5>
+                <button type="button" class="btn-close remove-day"></button>
+            </div>
 
-                                // Remove day
-                                itineraryContainer.addEventListener('click', function(e) {
-                                    if(e.target.classList.contains('remove-day')) {
-                                        e.target.closest('.day-card').remove();
-                                    }
-                                });
+            <div class="mb-3 w-25">
+                <label class="form-label">Date</label>
+                <input type="date"
+                       name="day_date[${cityId}]"
+                       class="form-control">
+            </div>
 
-                                // On form submit, copy Quill content to hidden inputs
-                                document.getElementById('tourForm').addEventListener('submit', function () {
-                                    for (const cityId in quillEditors) {
-                                        const editor = quillEditors[cityId];
-                                        const hiddenInput = document.querySelector(`input[name='day_description[${cityId}]']`);
-                                        if(hiddenInput) {
-                                            hiddenInput.value = editor.root.innerHTML;
-                                        }
-                                    }
-                                });
-                            });
-                        </script>
-                        
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <div class="quill-editor" id="editor-${cityId}"></div>
+                <input type="hidden"
+                       name="day_description[${cityId}]">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Images</label>
+                <input type="file"
+                       name="day_images[${cityId}][]"
+                       class="form-control"
+                       multiple
+                       accept="image/*">
+            </div>
+        `;
+
+        itineraryContainer.appendChild(wrapper);
+        initQuill(cityId);
+    }
+
+    /* Init existing editors */
+    document.querySelectorAll('.day-card').forEach(card => {
+        initQuill(card.dataset.cityId);
+    });
+
+    /* Add city */
+    cityDropdown.addEventListener('change', function () {
+        if (!this.value) return;
+        addCityDay(this.value, this.options[this.selectedIndex].text);
+        this.value = '';
+    });
+
+    /* Remove city */
+    itineraryContainer.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-day')) {
+            e.target.closest('.day-card').remove();
+        }
+    });
+
+    /* Sync Quill → hidden inputs */
+    document.getElementById('tourForm').addEventListener('submit', function () {
+        for (const cityId in quillEditors) {
+            const hidden = document.querySelector(`input[name="day_description[${cityId}]"]`);
+            if (hidden) {
+                hidden.value = quillEditors[cityId].root.innerHTML;
+            }
+        }
+    });
+
+});
+</script>
+
                     </div>
+<div class="mt-4 d-flex gap-2 justify-content-end">
+    <a href="{{ route('itinerary-customers.index') }}" class="btn btn-secondary">
+        Cancel
+    </a>
+    <button type="submit" class="btn btn-success">
+        Save All
+    </button>
+</div>
 
-                    <div class="mt-4 d-flex gap-2 justify-content-end">
-                        <a href="{{ route('itinerary-customers.index') }}" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-success">Save All</button>
-                    </div>
                 </form>
             </div>
         </div>
     </div>
+</maiin>
 </x-app-layout>

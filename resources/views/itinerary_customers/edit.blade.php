@@ -218,29 +218,28 @@
                                                         <h5 class="fw-bold mb-0">City: {{ $city->name }}</h5>
                                                         <button type="button" class="btn-close remove-day"></button>
                                                     </div>
-
-                                                    <div class="mb-3 w-25">
-                                                        <label class="form-label">Date</label>
-                                                        <input type="date"
-                                                            name="day_date[{{ $city->id }}]"
-                                                            class="form-control">
+                                                    <hr>
+                                                    <div class="row mt-3">
+                                                        <div class="mb-3 w-25">
+                                                            <label class="form-label">Date</label>
+                                                            <input type="date" name="day_date[{{ $city->id }}]" class="form-control">
+                                                        </div>
+    
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Name</label>
+                                                            <input type="text" class="form-control" value="{{ $city->name }}">
+                                                        </div>
                                                     </div>
 
                                                     <div class="mb-3">
                                                         <label class="form-label">Description</label>
-                                                        <div class="quill-editor"
-                                                            id="editor-{{ $city->id }}"></div>
-                                                        <input type="hidden"
-                                                            name="day_description[{{ $city->id }}]">
+                                                        <div class="quill-editor" id="editor-{{ $city->id }}"></div>
+                                                        <input type="hidden" name="day_description[{{ $city->id }}]">
                                                     </div>
 
                                                     <div class="mb-3">
                                                         <label class="form-label">Images</label>
-                                                        <input type="file"
-                                                            name="day_images[{{ $city->id }}][]"
-                                                            class="form-control"
-                                                            multiple
-                                                            accept="image/*">
+                                                        <input type="file" name="day_images[{{ $city->id }}][]" class="form-control" multiple accept="image/*">
                                                         <small class="text-muted">
                                                             You can upload multiple images (jpg, png, webp)
                                                         </small>
@@ -300,9 +299,17 @@
                                             <button type="button" class="btn-close remove-day"></button>
                                         </div>
 
-                                        <div class="mb-3 w-25">
-                                            <label class="form-label">Date</label>
-                                            <input type="date" name="day_date[${cityId}]" class="form-control">
+                                         <hr>
+                                        <div class="row mt-3">
+                                            <div class="mb-3 w-25">
+                                                <label class="form-label">Date</label>
+                                                <input type="date" name="day_date[{{ $city->id }}]" class="form-control">
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label class="form-label">Name</label>
+                                                <input type="text" class="form-control" value="{{ $city->name }}">
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">

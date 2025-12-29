@@ -15,54 +15,38 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-             <tbody>
-                @foreach($customers as $customer)
+                <tbody>
+                    @foreach($customers as $customer)
+                        @php
+                            $data = $customer->latestRevision ?? $customer;
+                            $revisionCount = $customer->revisions->count();
+                        @endphp
 
-                    @php
-                        $data = $customer->latestRevision ?? $customer;
-                        $revisionCount = $customer->revisions->count();
-                    @endphp
+                        <tr>
+                            <td>
+                                {{ $data->reference_no }}
 
-                    <tr>
-                        <td>
-                            {{ $data->reference_no }}
+                                @if($revisionCount > 0)
+                                    <span class="badge bg-warning text-dark ms-1">
+                                        Revised {{ $revisionCount }}x
+                                    </span>
+                                @endif
+                            </td>
+                            <td>{{ $data->full_name }}</td>
+                            <td>{{ $data->start_date ? \Carbon\Carbon::parse($data->start_date)->format('Y-m-d') : '-' }}</td>
+                            <td>{{ $data->end_date ? \Carbon\Carbon::parse($data->end_date)->format('Y-m-d') : '-' }}</td>
+                            <td>
+                                <a href="{{ route('itinerary-customers.show', $customer) }}" class="btn btn-sm btn-primary">
+                                    View
+                                </a>
 
-                            @if($revisionCount > 0)
-                                <span class="badge bg-warning text-dark ms-1">
-                                    Revised {{ $revisionCount }}x
-                                </span>
-                            @endif
-                        </td>
-
-                        <td>{{ $data->full_name }}</td>
-
-                        <td>
-                            {{ $data->start_date
-                                ? \Carbon\Carbon::parse($data->start_date)->format('Y-m-d')
-                                : '-' }}
-                        </td>
-
-                        <td>
-                            {{ $data->end_date
-                                ? \Carbon\Carbon::parse($data->end_date)->format('Y-m-d')
-                                : '-' }}
-                        </td>
-
-                        <td>
-                            <a href="{{ route('itinerary-customers.show', $customer) }}"
-                            class="btn btn-sm btn-primary">
-                                View
-                            </a>
-
-                            <a href="{{ route('itinerary-customers.edit', $customer) }}"
-                            class="btn btn-sm btn-success">
-                                Edit
-                            </a>
-                        </td>
-                    </tr>
-
-                @endforeach
-            </tbody>
+                                <a href="{{ route('itinerary-customers.edit', $customer) }}" class="btn btn-sm btn-success">
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </main>

@@ -43,6 +43,8 @@ class ItineraryCustomer extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date'   => 'date',
+        'theme_ids' => 'array',
+        'city_ids' => 'array',
     ];
 
     public function revisions()

@@ -36,8 +36,8 @@
     </style>
 
 @php
-    $selectedTheme = $itineraryCustomer->theme_ids ? json_decode($itineraryCustomer->theme_ids)[0] ?? null : null;
-    $selectedCities = collect(json_decode($itineraryCustomer->city_ids ?? '[]'));
+    $selectedTheme  = $itineraryCustomer->theme_ids[0] ?? null;
+    $selectedCities = collect($itineraryCustomer->city_ids ?? []);
 @endphp
 
 <main class="ml-64 pt-14 p-2">
@@ -50,7 +50,7 @@
 
             <div class="card-body">
                 <!-- SINGLE FORM FOR EVERYTHING -->
-                <form id="tourForm" action="{{ route('itinerary-customers.updateRevision', $itineraryCustomer) }}" method="POST">
+                <form id="tourForm" action="{{ route('itinerary-customers.updateRevision', $itineraryCustomer) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
